@@ -191,7 +191,7 @@ Citizen.CreateThread(function()
                                 ESX.TriggerServerCallback('qb-garbagejob:server:HasMoney', function(HasMoney)
                                     if HasMoney then
                                         local coords = Config.Locations["vehicle"].coords
-                                        ESX.SpawnVehicle("trash2", function(veh)
+                                        spawnvehicle("trash2", function(veh)
                                             GarbageVehicle = veh
                                             SetVehicleNumberPlateText(veh, "GARB"..tostring(math.random(1000, 9999)))
                                             SetEntityHeading(veh, coords.h)
@@ -220,6 +220,32 @@ Citizen.CreateThread(function()
         Citizen.Wait(1)
     end
 end)
+
+function spawnvehicle(model, cb, coords, isnetworked)
+    local model = (type(model)=="number" and model or GetHashKey(model))
+    local coords = coords ~= nil and coords or ESX.GetCoords(GetPlayerPed(-1))
+    local isnetworked = isnetworked ~= nil and isnetworked or true
+
+    RequestModel(model)
+    while not HasModelLoaded(model) do
+        Citizen.Wait(10)
+    end
+
+    local veh = CreateVehicle(model, coords.x, coords.y, coords.z, coords.a, isnetworked, false)
+    local netid = NetworkGetNetworkIdFromEntity(veh)
+
+	SetVehicleHasBeenOwnedByPlayer(vehicle,  true)
+	SetNetworkIdCanMigrate(netid, true)
+    --SetEntityAsMissionEntity(veh, true, true)
+    SetVehicleNeedsToBeHotwired(veh, false)
+    SetVehRadioStation(veh, "OFF")
+
+    SetModelAsNoLongerNeeded(model)
+
+    if cb ~= nil then
+        cb(veh)
+    end
+end
 
 Citizen.CreateThread(function()
     while true do

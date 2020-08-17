@@ -11,4 +11,4 @@ https://youtu.be/zgNLZ6V3si4
 * Go to locations
 * Pick up trash
 * Great for RolePlay with gangs since the locations are in gangs areas.
-* Easy to config```
+* Easy to config
